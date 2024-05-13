@@ -20,6 +20,7 @@ import (
 )
 
 const (
+	LicenseV1VersionStr            = "v1"
 	LicenseV1Version        uint32 = 1
 	LicenseV1FlagRaw        byte   = 1 << 0
 	LicenseV1FlagCiphertext byte   = 1 << 1
@@ -70,7 +71,7 @@ type AuthV1 struct {
 	Remark    string
 }
 
-func ParseLicenseV1File(p string, pub *ed25519.PublicKey, pubR *rsa.PublicKey) (*LicenseV1, error) {
+func ParseLicenseV1File(p string, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*LicenseV1, error) {
 	data, err := os.ReadFile(p)
 	if err != nil {
 		return nil, errors.Wrap(err, "load license")
@@ -84,7 +85,7 @@ func ParseLicenseV1File(p string, pub *ed25519.PublicKey, pubR *rsa.PublicKey) (
 	return ParseLicenseV1(raw, pub, pubR)
 }
 
-func ParseLicenseV1(raw []byte, pub *ed25519.PublicKey, pubR *rsa.PublicKey) (*LicenseV1, error) {
+func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*LicenseV1, error) {
 	if len(raw) < len(LicenseV1Magic)+4 { // 18 = Magic + Version
 		return nil, errors.New("invalid license header")
 	}
@@ -117,7 +118,7 @@ func ParseLicenseV1(raw []byte, pub *ed25519.PublicKey, pubR *rsa.PublicKey) (*L
 	h := sha256.New()
 	h.Write(raw)
 
-	if !ed25519.Verify(*pub, h.Sum(nil), l.Sign) {
+	if !ed25519.Verify(pub, h.Sum(nil), l.Sign) {
 		return nil, errors.New("invalid license sign")
 	}
 
@@ -199,7 +200,7 @@ func ParseLicenseV1(raw []byte, pub *ed25519.PublicKey, pubR *rsa.PublicKey) (*L
 	return l, nil
 }
 
-func BuildLicenseV1(auths []AuthV1, priv *ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) ([]byte, error) {
+func BuildLicenseV1(auths []AuthV1, priv ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) ([]byte, error) {
 	if flag&LicenseV1FlagRaw == 0 && flag&LicenseV1FlagCiphertext == 0 {
 		return nil, errors.New("invalid flag")
 	}
@@ -278,7 +279,7 @@ func BuildLicenseV1(auths []AuthV1, priv *ed25519.PrivateKey, privR *rsa.Private
 	h := sha256.New()
 	h.Write(cdata.Bytes())
 
-	sign := ed25519.Sign(*priv, h.Sum(nil))
+	sign := ed25519.Sign(priv, h.Sum(nil))
 	if len(sign) > math.MaxUint16 {
 		panic("sign over MaxUint16")
 	}

@@ -47,7 +47,7 @@ func TestLicenseV1(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		data, err := BuildLicenseV1(auths, &priv, privR, c.Flag)
+		data, err := BuildLicenseV1(auths, priv, privR, c.Flag)
 		assert.Nil(t, err)
 
 		//os.WriteFile(fmt.Sprintf("%d.dat", i), data, 0666)
@@ -59,7 +59,7 @@ func TestLicenseV1(t *testing.T) {
 			assert.False(t, bytes.Contains(data, []byte(id)))
 		}
 
-		l, err := ParseLicenseV1(data, &pub, pubR)
+		l, err := ParseLicenseV1(data, pub, pubR)
 		assert.Nil(t, err)
 		assert.NotNil(t, l)
 		assert.Equal(t, auths, l.Auths)

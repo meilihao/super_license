@@ -1,4 +1,7 @@
 pkg/key/*.pem
 pkg/license/*.dat
 cmd/sltool/*.pem
+cmd/sltool/*.dat
+!cmd/sltool/id_*.pem
+!cmd/sltool/license.dat
 cmd/sltool/sltool

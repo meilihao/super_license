@@ -16,13 +16,16 @@ import (
 )
 
 var (
-	licFpath           string
-	licVersion         string
+	licFpath   string
+	licVersion string
+
 	licSignPemPath     string
 	licEncPemPath      string
 	licSignPemPassword string
 	licEncPemPassword  string
-	licDecPemPath      string
+
+	licVerifyPemPath string
+	licDecPemPath    string
 )
 
 var (
@@ -41,22 +44,20 @@ var (
 )
 
 func init() {
-	build.PersistentFlags().StringVarP(&licVersion, "version", "v", "v1", "license version")
 	build.PersistentFlags().StringVarP(&licSignPemPath, "signkey", "p", "id_ed25519.pem", "private key for sign")
 	build.PersistentFlags().StringVarP(&licEncPemPath, "enckey", "e", "id_rsa.pem", "private key for encrypt")
 	build.PersistentFlags().StringVarP(&licSignPemPassword, "signpassword", "m", "", "password for sign private key")
 	build.PersistentFlags().StringVarP(&licEncPemPassword, "encpassword", "n", "", "password for encrypt private key")
-	build.PersistentFlags().StringVarP(&licFpath, "path", "l", "license.dat", "license path")
 
-	parse.PersistentFlags().StringVarP(&licVersion, "version", "v", "v1", "license version")
-	parse.PersistentFlags().StringVarP(&licFpath, "path", "l", "license.dat", "license path")
-	parse.PersistentFlags().StringVarP(&licSignPemPath, "signkey", "p", "id_ed25519.pub.pem", "public key for verify sign")
+	parse.PersistentFlags().StringVarP(&licVerifyPemPath, "verifykey", "", "id_ed25519.pub.pem", "public key for verify sign")
 	parse.PersistentFlags().StringVarP(&licDecPemPath, "deckey", "d", "id_rsa.pub.pem", "public key for decrypt")
 }
 
 func BuildRun(cmd *cobra.Command, args []string) error {
 	switch licVersion {
-	case "v1":
+	case license.LicenseV1VersionStr:
+		fmt.Println("use license:" + license.LicenseV1VersionStr)
+		fmt.Println("use signkey:" + licSignPemPath)
 		signPemData, _ := os.ReadFile(licSignPemPath)
 		signPriv, err := key.ParsePrivFromPem(signPemData, []byte(licSignPemPassword))
 		if err != nil {
@@ -65,6 +66,7 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 
 		var encPriv *rsa.PrivateKey
 		if licEncPemPath != "" {
+			fmt.Println("use enckey:" + licEncPemPath)
 			encPemData, _ := os.ReadFile(licEncPemPath)
 			encPrivAny, err := key.ParsePrivFromPem(encPemData, []byte(licEncPemPassword))
 			if err != nil {
@@ -86,7 +88,7 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 			flag |= license.LicenseV1FlagCiphertext
 		}
 
-		data, err := license.BuildLicenseV1(auths, signPriv.(*ed25519.PrivateKey), encPriv, flag)
+		data, err := license.BuildLicenseV1(auths, signPriv.(ed25519.PrivateKey), encPriv, flag)
 		if err != nil {
 			return errors.Wrap(err, "build license")
 		}
@@ -106,15 +108,18 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 
 func ParseRun(cmd *cobra.Command, args []string) error {
 	switch licVersion {
-	case "v1":
-		signPemData, _ := os.ReadFile(licSignPemPath)
-		signPub, err := key.ParsePubFromPem(signPemData)
+	case license.LicenseV1VersionStr:
+		fmt.Println("use license:" + license.LicenseV1VersionStr)
+		fmt.Println("use verifykey:" + licVerifyPemPath)
+		verifyPemData, _ := os.ReadFile(licVerifyPemPath)
+		verifyPub, err := key.ParsePubFromPem(verifyPemData)
 		if err != nil {
 			return errors.Wrap(err, "load public key for verify sign")
 		}
 
 		var decPub *rsa.PublicKey
 		if licDecPemPath != "" {
+			fmt.Println("use deckey:" + licDecPemPath)
 			decPemData, _ := os.ReadFile(licDecPemPath)
 			decPubAny, err := key.ParsePubFromPem(decPemData)
 			if err != nil {
@@ -123,7 +128,7 @@ func ParseRun(cmd *cobra.Command, args []string) error {
 			decPub = decPubAny.(*rsa.PublicKey)
 		}
 
-		l, err := license.ParseLicenseV1File(licFpath, signPub.(*ed25519.PublicKey), decPub)
+		l, err := license.ParseLicenseV1File(licFpath, verifyPub.(ed25519.PublicKey), decPub)
 		if err != nil {
 			return errors.Wrap(err, "parse license")
 		}
