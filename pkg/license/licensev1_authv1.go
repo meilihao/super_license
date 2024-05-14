@@ -153,8 +153,8 @@ func WithTry() *AuthV1Check {
 		IsRequred: false,
 		Code:      AuthV1CodeIsTry,
 		Name:      "是否试用",
-		Check: func(value string, expiredAt int64) error {
-			if value != "t" && value != "f" {
+		Check: func(content string, expiredAt int64) error {
+			if content != "t" && content != "f" {
 				return errors.New("need t or f")
 			}
 
@@ -171,7 +171,7 @@ func WithExpiredAt() *AuthV1Check {
 		Code:      AuthV1CodeExpiredAt,
 		Name:      "过期时间",
 		Remark:    "timestamp",
-		Check: func(value string, expiredAt int64) error {
+		Check: func(content string, expiredAt int64) error {
 			now := time.Now().Unix()
 
 			if expiredAt <= now {
@@ -191,7 +191,7 @@ func WithModel() *AuthV1Check {
 		IsRequred: false,
 		Code:      AuthV1CodeModel,
 		Name:      "适配型号",
-		Check: func(value string, expiredAt int64) error {
+		Check: func(content string, expiredAt int64) error {
 			return nil
 		},
 		RequredContent: true,
