@@ -58,6 +58,7 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 	case license.LicenseV1VersionStr:
 		fmt.Println("use license:" + license.LicenseV1VersionStr)
 		fmt.Println("use signkey:" + licSignPemPath)
+
 		signPemData, _ := os.ReadFile(licSignPemPath)
 		signPriv, err := key.ParsePrivFromPem(signPemData, []byte(licSignPemPassword))
 		if err != nil {
@@ -67,6 +68,7 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 		var encPriv *rsa.PrivateKey
 		if licEncPemPath != "" {
 			fmt.Println("use enckey:" + licEncPemPath)
+
 			encPemData, _ := os.ReadFile(licEncPemPath)
 			encPrivAny, err := key.ParsePrivFromPem(encPemData, []byte(licEncPemPassword))
 			if err != nil {
@@ -111,6 +113,7 @@ func ParseRun(cmd *cobra.Command, args []string) error {
 	case license.LicenseV1VersionStr:
 		fmt.Println("use license:" + license.LicenseV1VersionStr)
 		fmt.Println("use verifykey:" + licVerifyPemPath)
+
 		verifyPemData, _ := os.ReadFile(licVerifyPemPath)
 		verifyPub, err := key.ParsePubFromPem(verifyPemData)
 		if err != nil {
@@ -120,6 +123,7 @@ func ParseRun(cmd *cobra.Command, args []string) error {
 		var decPub *rsa.PublicKey
 		if licDecPemPath != "" {
 			fmt.Println("use deckey:" + licDecPemPath)
+
 			decPemData, _ := os.ReadFile(licDecPemPath)
 			decPubAny, err := key.ParsePubFromPem(decPemData)
 			if err != nil {
