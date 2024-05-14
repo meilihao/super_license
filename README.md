@@ -17,3 +17,6 @@ ref:
 
 ## example
 见`pkg/license/licensev1_authv1.go`和`pkg/license/licensev1_demo.go`
+
+## license
+[Apache License 2.0](https://github.com/apache/.github/blob/main/LICENSE)
