@@ -60,15 +60,7 @@ type LicenseV1 struct {
 	Raw        []byte
 	CipherKey  []byte
 	Ciphertext []byte
-	Auths      []AuthV1 // from Raw/Ciphertext
-}
-
-type AuthV1 struct {
-	Code      string
-	Name      string `json:",omitempty"`
-	Content   string
-	ExpiredAt int64 `json:",omitempty"` // 0, is no expire
-	Remark    string
+	Auths      []*AuthV1 // from Raw/Ciphertext
 }
 
 func ParseLicenseV1File(p string, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*LicenseV1, error) {
@@ -200,7 +192,7 @@ func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*Li
 	return l, nil
 }
 
-func BuildLicenseV1(auths []AuthV1, priv ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) ([]byte, error) {
+func BuildLicenseV1(auths []*AuthV1, priv ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) ([]byte, error) {
 	if flag&LicenseV1FlagRaw == 0 && flag&LicenseV1FlagCiphertext == 0 {
 		return nil, errors.New("invalid flag")
 	}

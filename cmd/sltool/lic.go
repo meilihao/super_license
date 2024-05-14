@@ -75,7 +75,7 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 			encPriv = encPrivAny.(*rsa.PrivateKey)
 		}
 
-		auths := []license.AuthV1{
+		auths := []*license.AuthV1{
 			{
 				Code:    "id",
 				Name:    "ID",

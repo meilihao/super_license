@@ -13,3 +13,6 @@ ref:
 
 ## schema
 见`pkg/license/licensev1.go`的`LicenseV1`和`AuthV1`
+
+## example
+见`pkg/license/licensev1_authv1.go`和`pkg/license/licensev1_demo.go`

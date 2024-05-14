@@ -26,7 +26,7 @@ func TestLicenseV1(t *testing.T) {
 	id, err := gonanoid.New()
 	assert.Nil(t, err)
 
-	auths := []AuthV1{
+	auths := []*AuthV1{
 		{
 			Code:    "id",
 			Name:    "ID",
