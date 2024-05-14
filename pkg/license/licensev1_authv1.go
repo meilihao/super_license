@@ -14,10 +14,10 @@ import (
 // - Name,Remark: 单纯为了展示
 type AuthV1 struct {
 	Code      string
+	Content   string `json:",omitempty"`
+	ExpiredAt int64  `json:",omitempty"` // 0, is no expire
 	Name      string `json:",omitempty"`
-	Content   string
-	ExpiredAt int64 `json:",omitempty"` // 0, is no expire
-	Remark    string
+	Remark    string `json:",omitempty"`
 }
 
 type CreateLicenseReq struct {
@@ -53,8 +53,8 @@ func RegisterLicenseV1(l LicenserV1) {
 			panic(errors.Errorf("double Check: %s, %s", l.Name(), v.Code))
 		}
 
-		if v.ReqExp != "" {
-			v._Reg = regexp.MustCompile(v.ReqExp)
+		if v.RegExp != "" {
+			v._Reg = regexp.MustCompile(v.RegExp)
 		}
 
 		m[v.Code] = true
@@ -66,15 +66,15 @@ func RegisterLicenseV1(l LicenserV1) {
 type AuthV1Check struct {
 	IsRequred      bool
 	Code           string
-	Name           string // inject to license
-	Remark         string // inject to license
-	Check          func(string, int64) error
+	Name           string                    // inject to license
+	Remark         string                    // inject to license
+	Check          func(string, int64) error `json:"-"`
 	RequredExpired bool
 	RequredContent bool
 	Example        string
 	Tip            string
-	ReqExp         string
-	_Reg           *regexp.Regexp
+	RegExp         string
+	_Reg           *regexp.Regexp `json:"-"`
 }
 
 func GenerateAuthV1s(checks []*AuthV1Check, r *CreateLicenseReq) ([]*AuthV1, error) {
@@ -118,7 +118,7 @@ func GenerateAuthV1s(checks []*AuthV1Check, r *CreateLicenseReq) ([]*AuthV1, err
 
 		if c._Reg != nil {
 			if !c._Reg.MatchString(t.Content) {
-				return nil, errors.Errorf("Reg Check Auth failed: %s", t.Code)
+				return nil, errors.Errorf("reg Auth failed: %s", t.Code)
 			}
 		}
 
@@ -196,6 +196,6 @@ func WithModel() *AuthV1Check {
 		},
 		RequredContent: true,
 		Example:        "X100",
-		ReqExp:         `^X[0-9]{3}$`,
+		RegExp:         `^X[0-9]{3}$`,
 	}
 }

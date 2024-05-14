@@ -100,11 +100,11 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 			return errors.Wrap(err, "save license")
 		}
 
-		fmt.Println(fmt.Sprintf("build license ok: %s", licFpath))
+		fmt.Printf("build license ok: %s\n", licFpath)
 
 		return nil
 	default:
-		return errors.New("unsupport license version")
+		return license.ErrUnsupportVersion
 	}
 }
 
@@ -141,6 +141,6 @@ func ParseRun(cmd *cobra.Command, args []string) error {
 
 		return nil
 	default:
-		return errors.New("unsupport license version")
+		return license.ErrUnsupportVersion
 	}
 }
