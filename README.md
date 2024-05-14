@@ -1,4 +1,5 @@
 # super_license
+super_license 是一款用于安全加固类的开源项目, 为软件提供授权制的使用方式.
 
 ## mcode
 ref:
