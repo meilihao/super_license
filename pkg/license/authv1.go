@@ -59,7 +59,7 @@ func GenerateAuthV1s(checks []*AuthV1Check, auths []*AuthV1) ([]*AuthV1, error) 
 	for _, a := range auths {
 		c = cm[a.Code]
 		if c == nil {
-			return nil, errors.Errorf("unsupport Auth: %s", a.Code)
+			return nil, errors.Errorf("unsupported Auth: %s", a.Code)
 		}
 
 		t := &AuthV1{
@@ -80,7 +80,7 @@ func GenerateAuthV1s(checks []*AuthV1Check, auths []*AuthV1) ([]*AuthV1, error) 
 
 		if c.RequredContent || c.RequredExpired {
 			if err = c.Check(t.Content, t.ExpiredAt); err != nil {
-				return nil, err
+				return nil, errors.Wrapf(err, "invalid Auth(%s)", c.Code)
 			}
 		}
 
@@ -142,7 +142,7 @@ func WithModel() *AuthV1Check {
 		Check: func(content string, expiredAt int64) error {
 			r := regexp.MustCompile(`^X[0-9]{3}$`)
 			if !r.MatchString(content) {
-				return errors.New("invalid content by regexp")
+				return errors.New("invalid model")
 			}
 
 			return nil

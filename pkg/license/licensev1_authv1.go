@@ -24,7 +24,7 @@ var (
 func RegisterLicenseV1(l LicenserV1) {
 	_, isExist := licenseV1Store.Load(l.Name())
 	if isExist {
-		panic(errors.Errorf("double register: %s", l.Name()))
+		panic(errors.Errorf("double register licensev1: %s", l.Name()))
 	}
 
 	cs := l.Checks()
