@@ -5,3 +5,6 @@ cmd/sltool/*.dat
 !cmd/sltool/id_*.pem
 !cmd/sltool/license.dat
 cmd/sltool/sltool
+cmd/slreq/*.dat
+!cmd/slreq/req.dat
+cmd/slreq/slreq

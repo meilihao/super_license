@@ -133,6 +133,9 @@ func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*Li
 		}
 
 		l.Raw = data[8 : 8+int(rl)]
+		if len(l.Raw) == 0 {
+			return nil, errors.New("missing license raw data")
+		}
 
 		data = data[8+int(rl):]
 	}
@@ -152,6 +155,9 @@ func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*Li
 		}
 
 		l.CipherKey = data[2 : 2+int(kl)]
+		if len(l.CipherKey) == 0 {
+			return nil, errors.New("missing license req key data")
+		}
 
 		data = data[2+int(kl):]
 
@@ -166,6 +172,9 @@ func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*Li
 		}
 
 		l.Ciphertext = data[8 : 8+int(cl)]
+		if len(l.Ciphertext) == 0 {
+			return nil, errors.New("missing license ciphertext data")
+		}
 
 		if data = data[8+int(cl):]; len(data) != 0 {
 			return nil, errors.New("invalid data remain")
