@@ -64,7 +64,7 @@ func RegisterLicenseV1(l LicenserV1) {
 }
 
 type AuthV1Check struct {
-	IsRequred      bool
+	Requred        bool
 	Code           string
 	Name           string                    // inject to license
 	Remark         string                    // inject to license
@@ -93,7 +93,7 @@ func GenerateAuthV1s(checks []*AuthV1Check, r *CreateLicenseReq) ([]*AuthV1, err
 	}
 
 	for _, c := range cm {
-		if rm[c.Code] == nil && c.IsRequred {
+		if rm[c.Code] == nil && c.Requred {
 			return nil, errors.Errorf("missing Required Auth: %s", c.Code)
 		}
 	}
@@ -150,9 +150,9 @@ const (
 
 func WithTry() *AuthV1Check {
 	return &AuthV1Check{
-		IsRequred: false,
-		Code:      AuthV1CodeIsTry,
-		Name:      "是否试用",
+		Requred: false,
+		Code:    AuthV1CodeIsTry,
+		Name:    "是否试用",
 		Check: func(content string, expiredAt int64) error {
 			if content != "t" && content != "f" {
 				return errors.New("need t or f")
@@ -167,10 +167,10 @@ func WithTry() *AuthV1Check {
 
 func WithExpiredAt() *AuthV1Check {
 	return &AuthV1Check{
-		IsRequred: true,
-		Code:      AuthV1CodeExpiredAt,
-		Name:      "过期时间",
-		Remark:    "timestamp",
+		Requred: true,
+		Code:    AuthV1CodeExpiredAt,
+		Name:    "过期时间",
+		Remark:  "timestamp",
 		Check: func(content string, expiredAt int64) error {
 			now := time.Now().Unix()
 
@@ -188,9 +188,9 @@ func WithExpiredAt() *AuthV1Check {
 
 func WithModel() *AuthV1Check {
 	return &AuthV1Check{
-		IsRequred: false,
-		Code:      AuthV1CodeModel,
-		Name:      "适配型号",
+		Requred: false,
+		Code:    AuthV1CodeModel,
+		Name:    "适配型号",
 		Check: func(content string, expiredAt int64) error {
 			return nil
 		},
