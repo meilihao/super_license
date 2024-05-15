@@ -34,7 +34,7 @@ func (r *GenerateRSAReq) Valid() error {
 	if r.Password != "" {
 		var err error
 		if r._Password, r._Salt, err = GenerateKDFKey([]byte(r.Password), nil); err != nil {
-			errors.Wrap(err, "generate kdf key")
+			return err
 		}
 	}
 
@@ -63,8 +63,11 @@ func GenerateRSA(r *GenerateRSAReq) error {
 	if err != nil {
 		return errors.Wrap(err, "creating private key file")
 	}
-	privFile.Write(privBuf)
-	privFile.Close()
+	defer privFile.Close()
+
+	if _, err = privFile.Write(privBuf); err != nil {
+		return errors.Wrap(err, "write private key file")
+	}
 
 	// Encode the public key to the PEM format
 	pubBuf, err := EncodePubToPem(pub)
@@ -76,8 +79,11 @@ func GenerateRSA(r *GenerateRSAReq) error {
 	if err != nil {
 		return errors.Wrap(err, "creating public key file")
 	}
-	pubFile.Write(pubBuf)
-	pubFile.Close()
+	defer pubFile.Close()
+
+	if _, err = pubFile.Write(pubBuf); err != nil {
+		return errors.Wrap(err, "write public key file")
+	}
 
 	fmt.Println("RSA key pair generated successfully!")
 

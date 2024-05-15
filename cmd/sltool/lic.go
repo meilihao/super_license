@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/ed25519"
 	"crypto/rsa"
-	"encoding/base64"
 	"fmt"
 	"os"
 
@@ -90,14 +89,9 @@ func BuildRun(cmd *cobra.Command, args []string) error {
 			flag |= license.LicenseV1FlagCiphertext
 		}
 
-		data, err := license.BuildLicenseV1(auths, signPriv.(ed25519.PrivateKey), encPriv, flag)
+		err = license.BuildLicenseV1File(licFpath, auths, signPriv.(ed25519.PrivateKey), encPriv, flag)
 		if err != nil {
 			return errors.Wrap(err, "build license")
-		}
-
-		raw := base64.URLEncoding.EncodeToString(data)
-		if err = os.WriteFile(licFpath, []byte(raw), 0666); err != nil {
-			return errors.Wrap(err, "save license")
 		}
 
 		fmt.Printf("build license ok: %s\n", licFpath)

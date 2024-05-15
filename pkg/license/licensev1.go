@@ -192,6 +192,20 @@ func ParseLicenseV1(raw []byte, pub ed25519.PublicKey, pubR *rsa.PublicKey) (*Li
 	return l, nil
 }
 
+func BuildLicenseV1File(licFpath string, auths []*AuthV1, priv ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) error {
+	data, err := BuildLicenseV1(auths, priv, privR, flag)
+	if err != nil {
+		return err
+	}
+
+	raw := base64.URLEncoding.EncodeToString(data)
+	if err = os.WriteFile(licFpath, []byte(raw), 0666); err != nil {
+		return errors.Wrap(err, "save license")
+	}
+
+	return nil
+}
+
 func BuildLicenseV1(auths []*AuthV1, priv ed25519.PrivateKey, privR *rsa.PrivateKey, flag byte) ([]byte, error) {
 	if flag&LicenseV1FlagRaw == 0 && flag&LicenseV1FlagCiphertext == 0 {
 		return nil, errors.New("invalid flag")

@@ -39,7 +39,7 @@ func EncodePubToPem(pub any) ([]byte, error) {
 
 func ParsePubFromPem(pubPEM []byte) (any, error) {
 	if len(pubPEM) == 0 {
-		return nil, errors.New("no pem content")
+		return nil, errors.New("no public pem content")
 	}
 
 	block, _ := pem.Decode([]byte(pubPEM))
@@ -102,7 +102,7 @@ func EncodePrivToPem(priv any, password, salt []byte, comment string) ([]byte, e
 
 func ParsePrivFromPem(privPEM []byte, password []byte) (any, error) {
 	if len(privPEM) == 0 {
-		return nil, errors.New("no pem content")
+		return nil, errors.New("no private pem content")
 	}
 
 	block, _ := pem.Decode([]byte(privPEM))

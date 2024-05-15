@@ -16,13 +16,13 @@ func TestGenerateRSA(t *testing.T) {
 	cases := []RSATest{
 		{
 			In: &GenerateRSAReq{
-				Bits: 4096,
+				Bits: 3072, // save time for no use 4096, Avoid more than 30 seconds(test timeout)
 			},
 			Out: nil,
 		},
 		{
 			In: &GenerateRSAReq{
-				Bits:     4096,
+				Bits:     3072,
 				Password: "123456",
 			},
 			Out: nil,
