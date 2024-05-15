@@ -9,7 +9,7 @@ import (
 )
 
 func TestLicensev1Demo(t *testing.T) {
-	r := &CreateLicenseReq{
+	r := &CreateLicenseV1Req{
 		Name: "demo",
 		Auths: []*AuthV1{
 			{
