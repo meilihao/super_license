@@ -1,7 +1,6 @@
 package license
 
 import (
-	"regexp"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -38,10 +37,6 @@ func RegisterLicenseV1(l LicenserV1) {
 	for _, v := range cs {
 		if m[v.Code] {
 			panic(errors.Errorf("double Check: %s, %s", l.Name(), v.Code))
-		}
-
-		if v.RegExp != "" {
-			v._Reg = regexp.MustCompile(v.RegExp)
 		}
 
 		m[v.Code] = true

@@ -29,8 +29,6 @@ type AuthV1Check struct {
 	RequredContent bool
 	Example        string
 	Tip            string
-	RegExp         string
-	_Reg           *regexp.Regexp `json:"-"`
 }
 
 func GenerateAuthV1s(checks []*AuthV1Check, auths []*AuthV1) ([]*AuthV1, error) {
@@ -70,12 +68,6 @@ func GenerateAuthV1s(checks []*AuthV1Check, auths []*AuthV1) ([]*AuthV1, error) 
 			Remark:    c.Remark,
 			Content:   a.Content,
 			ExpiredAt: a.ExpiredAt,
-		}
-
-		if c._Reg != nil {
-			if !c._Reg.MatchString(t.Content) {
-				return nil, errors.Errorf("reg Auth failed: %s", t.Code)
-			}
 		}
 
 		if !c.RequredExpired {
@@ -148,10 +140,15 @@ func WithModel() *AuthV1Check {
 		Code:    AuthV1CodeModel,
 		Name:    "适配型号",
 		Check: func(content string, expiredAt int64) error {
+			r := regexp.MustCompile(`^X[0-9]{3}$`)
+			if !r.MatchString(content) {
+				return errors.New("invalid content by regexp")
+			}
+
 			return nil
 		},
 		RequredContent: true,
 		Example:        "X100",
-		RegExp:         `^X[0-9]{3}$`,
+		Tip:            `^X[0-9]{3}$`,
 	}
 }
