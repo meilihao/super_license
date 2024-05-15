@@ -32,7 +32,7 @@ func RegisterLicenseV1(l LicenserV1) {
 		panic(errors.Errorf("missing Checks: %s", l.Name()))
 	}
 
-	m := make(map[string]bool, len(cs)) // for check double req
+	m := make(map[string]bool, len(cs)) // for check double check
 
 	for _, v := range cs {
 		if m[v.Code] {
